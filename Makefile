@@ -2,11 +2,11 @@
 
 VENV = .venv
 PYTHON = source $(VENV)/bin/activate && python
-
+PYTHONPATH := $(PYTHONPATH):$(shell pwd)
 
 $(VENV)/.make-update: requirements-dev.txt
 	python -m venv $(VENV)
-	$(PYTHON) -m pip install -r $^
+	bash -c "source $(VENV)/bin/activate && python -m pip install -r requirements-dev.txt"
 	touch $@
 
 
@@ -16,4 +16,4 @@ dev: $(VENV)/.make-update
 
 .PHONY: test
 test: dev
-	@$(PYTHON) tests/test_template.py && echo "All tests passed"
+	PYTHONPATH=$(PYTHONPATH) . $(VENV)/bin/activate && pytest
